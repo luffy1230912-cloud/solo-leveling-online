@@ -30,6 +30,16 @@ function persist() {
   fs.writeFileSync(tmp, JSON.stringify(db));
   fs.renameSync(tmp, DB_FILE);
 }
+// CORS para a API HTTP (cadastro, login e salvamento).
+// O CORS do Socket.IO, configurado acima, não libera estas rotas Express.
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") return res.sendStatus(204);
+  next();
+});
+
 app.use(express.json({ limit: "1mb" }));
 app.get("/", (_req, res) => res.json({ name: "Solo Leveling 2D Online Server", status: "ok" }));
 const players = new Map();
